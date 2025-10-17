@@ -81,6 +81,24 @@
             color: #4169e1;
         }
         
+        /* Fixed image container styling */
+        .image-container {
+            margin: 2rem auto;
+            text-align: center;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+        }
+        
         .image-placeholder {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border: 2px dashed #dee2e6;
@@ -125,9 +143,9 @@
                 <h2 class="text-xl md:text-2xl text-gray-600 mb-4">My Vision for the Future</h2>
                 <p class="text-gray-500">Written by: Daphnie Marie S. Sandoval</p>
                 
-                <!-- Image Placeholder -->
-                <div class="image-placeholder mt-4">
-                    <img src="dapdap.jfif" class="img img-fluid"></img>
+                <!-- Fixed Image Container -->
+                <div class="image-container mt-4">
+                    <img src="dapdap.jfif" alt="Author Image" class="img-fluid">
                 </div>
             </header>
             
