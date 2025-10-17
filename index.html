@@ -16,6 +16,8 @@
             background-color: #fefefe;
             color: #333;
             overflow-x: hidden;
+            margin: 0;
+            padding: 0;
         }
         
         h1, h2, h3 {
@@ -32,27 +34,6 @@
             z-index: -1;
             opacity: 0.7;
             transform: rotate(-15deg);
-        }
-        
-        .pencil-bg {
-            position: fixed;
-            width: 200px;
-            height: 20px;
-            background: linear-gradient(to right, #ff9d00, #ff9d00 70%, #000 70%, #000 75%, #ff9d00 75%, #ff9d00 80%, #000 80%, #000 85%, #ff9d00 85%);
-            z-index: -1;
-            opacity: 0.7;
-            transition: all 2s ease-in-out;
-        }
-        
-        .pencil-bg::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            right: -15px;
-            width: 15px;
-            height: 30px;
-            background: #ff9d00;
-            clip-path: polygon(100% 0, 0 50%, 100% 100%);
         }
         
         .canvas-container {
@@ -130,8 +111,8 @@
 <body>
     <!-- Background Elements -->
     <div class="notebook-bg"></div>
-    <div id="pencil1" class="pencil-bg" style="bottom: 150px; left: 200px; transform: rotate(-15deg);"></div>
-    <div id="pencil2" class="pencil-bg" style="top: 100px; right: 150px; transform: rotate(10deg);"></div>
+    
+    <!-- Canvas for pencil animation -->
     <div class="canvas-container">
         <canvas id="backgroundCanvas"></canvas>
     </div>
@@ -213,6 +194,72 @@
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
+            }
+            
+            // Pencil class for managing moving pencils
+            class Pencil {
+                constructor() {
+                    this.reset();
+                    // Random initial position
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                }
+                
+                reset() {
+                    this.size = 20 + Math.random() * 30;
+                    this.rotation = Math.random() * Math.PI * 2;
+                    this.speedX = (Math.random() - 0.5) * 2;
+                    this.speedY = (Math.random() - 0.5) * 2;
+                    this.lifetime = 100 + Math.random() * 200;
+                    this.age = 0;
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.rotation += 0.01;
+                    this.age++;
+                    
+                    // Bounce off edges
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    
+                    // Reset if pencil is too old
+                    if (this.age > this.lifetime) {
+                        this.reset();
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                    }
+                }
+                
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    
+                    // Draw pencil body
+                    ctx.fillStyle = '#ffc266';
+                    ctx.fillRect(-this.size/2, -this.size/6, this.size, this.size/3);
+                    
+                    // Draw pencil tip (without black lead)
+                    ctx.beginPath();
+                    ctx.moveTo(this.size/2, -this.size/6);
+                    ctx.lineTo(this.size/2 + this.size/4, 0);
+                    ctx.lineTo(this.size/2, this.size/6);
+                    ctx.closePath();
+                    ctx.fillStyle = '#ff9933';
+                    ctx.fill();
+                    
+                    // Draw pencil eraser
+                    ctx.fillStyle = '#ff6666';
+                    ctx.fillRect(-this.size/2, -this.size/6, this.size/8, this.size/3);
+                    
+                    // Draw pencil metal band
+                    ctx.fillStyle = '#cccccc';
+                    ctx.fillRect(-this.size/2 + this.size/8, -this.size/6, this.size/16, this.size/3);
+                    
+                    ctx.restore();
+                }
             }
             
             // Shape class for managing moving shapes
@@ -420,7 +467,12 @@
                 }
             }
             
-            // Initialize shapes and magnifying glass
+            // Initialize pencils, shapes and magnifying glass
+            const pencils = [];
+            for (let i = 0; i < 8; i++) {
+                pencils.push(new Pencil());
+            }
+            
             const shapes = [];
             for (let i = 0; i < 15; i++) {
                 shapes.push(new Shape());
@@ -428,45 +480,24 @@
             
             const magnifyingGlass = new MagnifyingGlass();
             
-            // Function to reposition pencils
-            function repositionPencils() {
-                const pencil1 = document.getElementById('pencil1');
-                const pencil2 = document.getElementById('pencil2');
-                
-                // Random positions for pencil1
-                const p1Bottom = Math.random() * (window.innerHeight - 100);
-                const p1Left = Math.random() * (window.innerWidth - 200);
-                const p1Rotation = Math.random() * 60 - 30; // -30 to 30 degrees
-                
-                // Random positions for pencil2
-                const p2Top = Math.random() * (window.innerHeight - 100);
-                const p2Right = Math.random() * (window.innerWidth - 200);
-                const p2Rotation = Math.random() * 60 - 30; // -30 to 30 degrees
-                
-                pencil1.style.bottom = `${p1Bottom}px`;
-                pencil1.style.left = `${p1Left}px`;
-                pencil1.style.transform = `rotate(${p1Rotation}deg)`;
-                
-                pencil2.style.top = `${p2Top}px`;
-                pencil2.style.right = `${p2Right}px`;
-                pencil2.style.transform = `rotate(${p2Rotation}deg)`;
-            }
-            
-            // Reposition pencils every 8 seconds
-            setInterval(repositionPencils, 8000);
-            
             // Animation function
             function animate() {
                 // Clear canvas
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                // Draw Paris drawing
-                drawParisDrawing();
+                // Draw notebook background pattern
+                drawNotebookPattern();
                 
                 // Update and draw shapes
                 shapes.forEach(shape => {
                     shape.update();
                     shape.draw();
+                });
+                
+                // Update and draw pencils
+                pencils.forEach(pencil => {
+                    pencil.update();
+                    pencil.draw();
                 });
                 
                 // Draw magnifying glass
@@ -479,101 +510,70 @@
             }
             
             function applyMagnifyingEffect() {
-    // Save the current canvas state
-    ctx.save();
-    
-    // Create a temporary canvas for the magnified area
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCanvas.width = magnifyingGlass.radius * 2;
-    tempCanvas.height = magnifyingGlass.radius * 2;
-    
-    // Draw ONLY the shapes and Paris drawing to the temp canvas (not the pencils)
-    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-    
-    // Draw the area around magnifying glass position
-    tempCtx.drawImage(
-        canvas, 
-        magnifyingGlass.x - magnifyingGlass.radius, 
-        magnifyingGlass.y - magnifyingGlass.radius,
-        magnifyingGlass.radius * 2,
-        magnifyingGlass.radius * 2,
-        0, 0,
-        magnifyingGlass.radius * 2,
-        magnifyingGlass.radius * 2
-    );
-    
-    // Apply the magnifying effect with clipping
-    ctx.beginPath();
-    ctx.arc(magnifyingGlass.x, magnifyingGlass.y, magnifyingGlass.radius, 0, Math.PI * 2);
-    ctx.clip();
-    
-    // Draw the magnified area
-    ctx.drawImage(
-        tempCanvas,
-        0, 0,
-        magnifyingGlass.radius * 2,
-        magnifyingGlass.radius * 2,
-        magnifyingGlass.x - magnifyingGlass.radius * 1.5,
-        magnifyingGlass.y - magnifyingGlass.radius * 1.5,
-        magnifyingGlass.radius * 3,
-        magnifyingGlass.radius * 3
-    );
-    
-    // Restore the canvas state
-    ctx.restore();
-}
+                // Save the current canvas state
+                ctx.save();
+                
+                // Create a temporary canvas for the magnified area
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = magnifyingGlass.radius * 2;
+                tempCanvas.height = magnifyingGlass.radius * 2;
+                
+                // Draw the area around magnifying glass position
+                tempCtx.drawImage(
+                    canvas, 
+                    magnifyingGlass.x - magnifyingGlass.radius, 
+                    magnifyingGlass.y - magnifyingGlass.radius,
+                    magnifyingGlass.radius * 2,
+                    magnifyingGlass.radius * 2,
+                    0, 0,
+                    magnifyingGlass.radius * 2,
+                    magnifyingGlass.radius * 2
+                );
+                
+                // Apply the magnifying effect with clipping
+                ctx.beginPath();
+                ctx.arc(magnifyingGlass.x, magnifyingGlass.y, magnifyingGlass.radius, 0, Math.PI * 2);
+                ctx.clip();
+                
+                // Draw the magnified area
+                ctx.drawImage(
+                    tempCanvas,
+                    0, 0,
+                    magnifyingGlass.radius * 2,
+                    magnifyingGlass.radius * 2,
+                    magnifyingGlass.x - magnifyingGlass.radius * 1.5,
+                    magnifyingGlass.y - magnifyingGlass.radius * 1.5,
+                    magnifyingGlass.radius * 3,
+                    magnifyingGlass.radius * 3
+                );
+                
+                // Restore the canvas state
+                ctx.restore();
+            }
             
-            function drawParisDrawing() {
-                const x = canvas.width - 200;
-                const y = canvas.height - 150;
-                const size = 120;
+            function drawNotebookPattern() {
+                const lineSpacing = 30;
+                const margin = 50;
                 
                 ctx.save();
-                ctx.translate(x, y);
-                ctx.globalAlpha = 0.3;
-                ctx.strokeStyle = '#333';
+                ctx.strokeStyle = '#e0e0e0';
                 ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.3;
                 
-                // Draw Eiffel Tower silhouette
+                // Draw horizontal lines
+                for (let y = margin; y < canvas.height; y += lineSpacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(margin, y);
+                    ctx.lineTo(canvas.width - margin, y);
+                    ctx.stroke();
+                }
+                
+                // Draw vertical margin line
                 ctx.beginPath();
-                
-                // Base
-                ctx.moveTo(-size/4, size/2);
-                ctx.lineTo(size/4, size/2);
-                
-                // Legs
-                ctx.moveTo(-size/4, size/2);
-                ctx.lineTo(-size/6, 0);
-                
-                ctx.moveTo(size/4, size/2);
-                ctx.lineTo(size/6, 0);
-                
-                // Center structure
-                ctx.moveTo(0, size/2);
-                ctx.lineTo(0, -size/4);
-                
-                // First platform
-                ctx.moveTo(-size/6, size/4);
-                ctx.lineTo(size/6, size/4);
-                
-                // Second platform
-                ctx.moveTo(-size/8, size/8);
-                ctx.lineTo(size/8, size/8);
-                
-                // Top
-                ctx.moveTo(-size/16, -size/4);
-                ctx.lineTo(size/16, -size/4);
-                ctx.lineTo(0, -size/2);
-                ctx.lineTo(-size/16, -size/4);
-                
+                ctx.moveTo(margin, margin);
+                ctx.lineTo(margin, canvas.height - margin);
                 ctx.stroke();
-                
-                // Add "Paris" text
-                ctx.font = 'italic 16px Playfair Display';
-                ctx.fillStyle = '#333';
-                ctx.textAlign = 'center';
-                ctx.fillText('Paris', 0, size/2 + 20);
                 
                 ctx.restore();
             }
@@ -581,9 +581,6 @@
             // Initial setup
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
-            
-            // Initial pencil positioning
-            repositionPencils();
             
             // Start animation
             animate();
