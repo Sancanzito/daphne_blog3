@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balancing Fear and Fire: My Vision for the Future</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Lora', serif;
+            background-color: #fefefe;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .notebook-bg {
+            position: fixed;
+            bottom: -100px;
+            left: -100px;
+            width: 600px;
+            height: 600px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><rect x="0" y="0" width="600" height="600" fill="none" stroke="%23e0e0e0" stroke-width="2"/><line x1="50" y1="0" x2="50" y2="600" stroke="%23e0e0e0" stroke-width="1"/><line x1="0" y1="100" x2="600" y2="100" stroke="%23f5f5f5" stroke-width="1" stroke-dasharray="5,5"/><line x1="0" y1="200" x2="600" y2="200" stroke="%23f5f5f5" stroke-width="1" stroke-dasharray="5,5"/><line x1="0" y1="300" x2="600" y2="300" stroke="%23f5f5f5" stroke-width="1" stroke-dasharray="5,5"/><line x1="0" y1="400" x2="600" y2="400" stroke="%23f5f5f5" stroke-width="1" stroke-dasharray="5,5"/><line x1="0" y1="500" x2="600" y2="500" stroke="%23f5f5f5" stroke-width="1" stroke-dasharray="5,5"/></svg>');
+            z-index: -1;
+            opacity: 0.7;
+            transform: rotate(-15deg);
+        }
+        
+        .pencil-bg {
+            position: fixed;
+            width: 200px;
+            height: 20px;
+            background: linear-gradient(to right, #ff9d00, #ff9d00 70%, #000 70%, #000 75%, #ff9d00 75%, #ff9d00 80%, #000 80%, #000 85%, #ff9d00 85%);
+            z-index: -1;
+            opacity: 0.7;
+            transition: all 2s ease-in-out;
+        }
+        
+        .pencil-bg::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -15px;
+            width: 15px;
+            height: 30px;
+            background: #ff9d00;
+            clip-path: polygon(100% 0, 0 50%, 100% 100%);
+        }
+        
+        .canvas-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ccc, transparent);
+            margin: 2rem 0;
+        }
+        
+        .quote-box {
+            border-left: 4px solid #d4a574;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #555;
+        }
+        
+        .fear-text {
+            color: #8b4513;
+        }
+        
+        .hope-text {
+            color: #2e8b57;
+        }
+        
+        .dreams-text {
+            color: #4169e1;
+        }
+        
+        .image-placeholder {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-placeholder-text {
+            color: #6c757d;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .image-icon {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="notebook-bg"></div>
+    <div id="pencil1" class="pencil-bg" style="bottom: 150px; left: 200px; transform: rotate(-15deg);"></div>
+    <div id="pencil2" class="pencil-bg" style="top: 100px; right: 150px; transform: rotate(10deg);"></div>
+    <div class="canvas-container">
+        <canvas id="backgroundCanvas"></canvas>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="content-container">
+            <header class="text-center mb-5">
+                <h1 class="text-4xl md:text-5xl font-bold mb-3">Balancing Fear and Fire</h1>
+                <h2 class="text-xl md:text-2xl text-gray-600 mb-4">My Vision for the Future</h2>
+                <p class="text-gray-500">Written by: Daphnie Marie S. Sandoval</p>
+                
+                <!-- Image Placeholder -->
+                <div class="image-placeholder mt-4">
+                    <div class="image-icon">📷</div>
+                    <p class="image-placeholder-text">Future Vision Image</p>
+                    <p class="text-sm text-gray-500">(Image placeholder for visual representation of future dreams)</p>
+                </div>
+            </header>
+            
+            <article class="prose prose-lg max-w-none">
+                <p class="lead">Thinking about the future can feel scary, like looking at something hidden in the fog. It makes me feel worried, but also very hopeful and excited. This writing talks about both feelings: facing my biggest fears and making a clear plan to live a life that is stable, loving, and meaningful.</p>
+                
+                <hr class="section-divider">
+                
+                <section class="mb-5">
+                    <h3 class="text-2xl font-bold mb-3 fear-text">The Fear</h3>
+                    <p>The future scares me. You know what I mean? We never know what will happen to us five or ten years from now. I'm afraid that I won't make it to that future, or that something unfortunate will happen, because we really don't know what it holds.</p>
+                    
+                    <div class="quote-box">
+                        <p>Hearing the word "Future" brings up many thoughts that frighten me: I think of not lasting long enough, of losing the people I love throughout the journey, and of not achieving the future I want for myself.</p>
+                    </div>
+                </section>
+                
+                <section class="mb-5">
+                    <h3 class="text-2xl font-bold mb-3 hope-text">The Hope</h3>
+                    <p>While these are negative thoughts, thinking about the future also brings a different level of excitement to me: getting a stable job, being financially stable, spoiling my parents, making them proud, traveling to different countries, and building a family of my own.</p>
+                    
+                    <div class="quote-box">
+                        <p>With these visions, my fear, doubts, and worries about what will happen are replaced by hope and a motivation to do my best in the present so that I can achieve the future I envision for myself.</p>
+                    </div>
+                </section>
+                
+                <hr class="section-divider">
+                
+                <section class="mb-5">
+                    <h3 class="text-2xl font-bold mb-3 dreams-text">My Dreams and Promises</h3>
+                    <p>I have always promised myself that, in the future, I want a stable job. I want to own acres of land, have a plantation, travel to different countries, and give my parents everything they want, providing them healthcare or anything I'm capable of giving them. I want to live a peaceful life with the family I build.</p>
+                    
+                    <p>I dream of having a loving, faithful, and understanding husband. I also want to share why I always strive to be financially stable or even rich: I want my children to grow up free from financial worries. For example, they can go to the school they want and take the course they truly desire.</p>
+                    
+                    <div class="quote-box">
+                        <p>I don't want them to feel like a burden to me. I want my kids to have their own lives and discover their passions, and I'm always willing to support them, as long as it leads them down the right path and toward their betterment.</p>
+                    </div>
+                    
+                    <p>I want them to be the best version of themselves. I don't want to pressure them academically or compare them with other people, because I believe that we all have a different pace in life. But despite any wealth, I want my kids to grow up humble, kind, and wise.</p>
+                </section>
+                
+                <hr class="section-divider">
+                
+                <footer class="text-center mt-5 pt-5 border-t border-gray-200">
+                    <p class="text-gray-500">Thank you for reading my thoughts on the future.</p>
+                    <p class="text-gray-400 text-sm mt-2">- Daphnie</p>
+                </footer>
+            </article>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Canvas Background Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('backgroundCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size to window size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            // Shape class for managing moving shapes
+            class Shape {
+                constructor() {
+                    this.reset();
+                    // Random initial position
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                }
+                
+                reset() {
+                    this.size = 20 + Math.random() * 50;
+                    this.rotation = Math.random() * Math.PI * 2;
+                    this.opacity = 0.1 + Math.random() * 0.2;
+                    this.type = Math.floor(Math.random() * 4);
+                    this.speedX = (Math.random() - 0.5) * 1.5;
+                    this.speedY = (Math.random() - 0.5) * 1.5;
+                    this.lifetime = 100 + Math.random() * 200;
+                    this.age = 0;
+                    
+                    // Assign colors based on type
+                    switch(this.type) {
+                        case 0: // Circle
+                            this.color = '#8b4513';
+                            break;
+                        case 1: // Square
+                            this.color = '#2e8b57';
+                            break;
+                        case 2: // Triangle
+                            this.color = '#4169e1';
+                            break;
+                        case 3: // Heart
+                            this.color = '#d4a574';
+                            break;
+                    }
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.rotation += 0.01;
+                    this.age++;
+                    
+                    // Bounce off edges
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    
+                    // Reset if shape is too old
+                    if (this.age > this.lifetime) {
+                        this.reset();
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                    }
+                }
+                
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    ctx.globalAlpha = this.opacity;
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 1;
+                    
+                    switch(this.type) {
+                        case 0: // Circle
+                            ctx.beginPath();
+                            ctx.arc(0, 0, this.size/2, 0, Math.PI * 2);
+                            ctx.stroke();
+                            break;
+                        case 1: // Square
+                            ctx.strokeRect(-this.size/2, -this.size/2, this.size, this.size);
+                            break;
+                        case 2: // Triangle
+                            ctx.beginPath();
+                            ctx.moveTo(0, -this.size/2);
+                            ctx.lineTo(this.size/2, this.size/2);
+                            ctx.lineTo(-this.size/2, this.size/2);
+                            ctx.closePath();
+                            ctx.stroke();
+                            break;
+                        case 3: // Heart
+                            this.drawHeart(ctx, 0, 0, this.size/2);
+                            break;
+                    }
+                    
+                    ctx.restore();
+                }
+                
+                drawHeart(ctx, x, y, size) {
+                    ctx.beginPath();
+                    const topCurveHeight = size * 0.3;
+                    ctx.moveTo(0, size/4);
+                    // Left top curve
+                    ctx.bezierCurveTo(
+                        -size/2, -size/4, 
+                        -size/2, topCurveHeight, 
+                        0, topCurveHeight
+                    );
+                    // Right top curve
+                    ctx.bezierCurveTo(
+                        size/2, topCurveHeight, 
+                        size/2, -size/4, 
+                        0, size/4
+                    );
+                    ctx.stroke();
+                }
+            }
+            
+            // Magnifying glass class
+            class MagnifyingGlass {
+                constructor() {
+                    this.radius = 80;
+                    this.isDragging = false;
+                    this.reposition();
+                    
+                    // Event listeners for dragging
+                    canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+                    canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                    canvas.addEventListener('mouseup', () => this.handleMouseUp());
+                    canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e));
+                    canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e));
+                    canvas.addEventListener('touchend', () => this.handleTouchEnd());
+                    
+                    // Auto reposition every 10 seconds
+                    setInterval(() => {
+                        if (!this.isDragging) {
+                            this.reposition();
+                        }
+                    }, 10000);
+                }
+                
+                reposition() {
+                    this.x = 100 + Math.random() * (canvas.width - 200);
+                    this.y = 100 + Math.random() * (canvas.height - 200);
+                }
+                
+                handleMouseDown(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    const distance = Math.sqrt((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2);
+                    if (distance <= this.radius) {
+                        this.isDragging = true;
+                    }
+                }
+                
+                handleMouseMove(e) {
+                    if (this.isDragging) {
+                        const rect = canvas.getBoundingClientRect();
+                        this.x = e.clientX - rect.left;
+                        this.y = e.clientY - rect.top;
+                    }
+                }
+                
+                handleMouseUp() {
+                    this.isDragging = false;
+                }
+                
+                handleTouchStart(e) {
+                    e.preventDefault();
+                    const rect = canvas.getBoundingClientRect();
+                    const touchX = e.touches[0].clientX - rect.left;
+                    const touchY = e.touches[0].clientY - rect.top;
+                    
+                    const distance = Math.sqrt((touchX - this.x) ** 2 + (touchY - this.y) ** 2);
+                    if (distance <= this.radius) {
+                        this.isDragging = true;
+                    }
+                }
+                
+                handleTouchMove(e) {
+                    if (this.isDragging) {
+                        e.preventDefault();
+                        const rect = canvas.getBoundingClientRect();
+                        this.x = e.touches[0].clientX - rect.left;
+                        this.y = e.touches[0].clientY - rect.top;
+                    }
+                }
+                
+                handleTouchEnd() {
+                    this.isDragging = false;
+                }
+                
+                draw() {
+                    // Draw magnifying glass
+                    ctx.save();
+                    
+                    // Glass effect
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    
+                    // Handle
+                    ctx.beginPath();
+                    ctx.moveTo(this.x + this.radius, this.y);
+                    ctx.lineTo(this.x + this.radius + 40, this.y - 20);
+                    ctx.lineTo(this.x + this.radius + 60, this.y - 20);
+                    ctx.stroke();
+                    
+                    ctx.restore();
+                }
+            }
+            
+            // Initialize shapes and magnifying glass
+            const shapes = [];
+            for (let i = 0; i < 15; i++) {
+                shapes.push(new Shape());
+            }
+            
+            const magnifyingGlass = new MagnifyingGlass();
+            
+            // Function to reposition pencils
+            function repositionPencils() {
+                const pencil1 = document.getElementById('pencil1');
+                const pencil2 = document.getElementById('pencil2');
+                
+                // Random positions for pencil1
+                const p1Bottom = Math.random() * (window.innerHeight - 100);
+                const p1Left = Math.random() * (window.innerWidth - 200);
+                const p1Rotation = Math.random() * 60 - 30; // -30 to 30 degrees
+                
+                // Random positions for pencil2
+                const p2Top = Math.random() * (window.innerHeight - 100);
+                const p2Right = Math.random() * (window.innerWidth - 200);
+                const p2Rotation = Math.random() * 60 - 30; // -30 to 30 degrees
+                
+                pencil1.style.bottom = `${p1Bottom}px`;
+                pencil1.style.left = `${p1Left}px`;
+                pencil1.style.transform = `rotate(${p1Rotation}deg)`;
+                
+                pencil2.style.top = `${p2Top}px`;
+                pencil2.style.right = `${p2Right}px`;
+                pencil2.style.transform = `rotate(${p2Rotation}deg)`;
+            }
+            
+            // Reposition pencils every 8 seconds
+            setInterval(repositionPencils, 8000);
+            
+            // Animation function
+            function animate() {
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw Paris drawing
+                drawParisDrawing();
+                
+                // Update and draw shapes
+                shapes.forEach(shape => {
+                    shape.update();
+                    shape.draw();
+                });
+                
+                // Draw magnifying glass
+                magnifyingGlass.draw();
+                
+                // Apply magnifying effect
+                applyMagnifyingEffect();
+                
+                requestAnimationFrame(animate);
+            }
+            
+            function applyMagnifyingEffect() {
+    // Save the current canvas state
+    ctx.save();
+    
+    // Create a temporary canvas for the magnified area
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCanvas.width = magnifyingGlass.radius * 2;
+    tempCanvas.height = magnifyingGlass.radius * 2;
+    
+    // Draw ONLY the shapes and Paris drawing to the temp canvas (not the pencils)
+    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+    
+    // Draw the area around magnifying glass position
+    tempCtx.drawImage(
+        canvas, 
+        magnifyingGlass.x - magnifyingGlass.radius, 
+        magnifyingGlass.y - magnifyingGlass.radius,
+        magnifyingGlass.radius * 2,
+        magnifyingGlass.radius * 2,
+        0, 0,
+        magnifyingGlass.radius * 2,
+        magnifyingGlass.radius * 2
+    );
+    
+    // Apply the magnifying effect with clipping
+    ctx.beginPath();
+    ctx.arc(magnifyingGlass.x, magnifyingGlass.y, magnifyingGlass.radius, 0, Math.PI * 2);
+    ctx.clip();
+    
+    // Draw the magnified area
+    ctx.drawImage(
+        tempCanvas,
+        0, 0,
+        magnifyingGlass.radius * 2,
+        magnifyingGlass.radius * 2,
+        magnifyingGlass.x - magnifyingGlass.radius * 1.5,
+        magnifyingGlass.y - magnifyingGlass.radius * 1.5,
+        magnifyingGlass.radius * 3,
+        magnifyingGlass.radius * 3
+    );
+    
+    // Restore the canvas state
+    ctx.restore();
+}
+            
+            function drawParisDrawing() {
+                const x = canvas.width - 200;
+                const y = canvas.height - 150;
+                const size = 120;
+                
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.globalAlpha = 0.3;
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                
+                // Draw Eiffel Tower silhouette
+                ctx.beginPath();
+                
+                // Base
+                ctx.moveTo(-size/4, size/2);
+                ctx.lineTo(size/4, size/2);
+                
+                // Legs
+                ctx.moveTo(-size/4, size/2);
+                ctx.lineTo(-size/6, 0);
+                
+                ctx.moveTo(size/4, size/2);
+                ctx.lineTo(size/6, 0);
+                
+                // Center structure
+                ctx.moveTo(0, size/2);
+                ctx.lineTo(0, -size/4);
+                
+                // First platform
+                ctx.moveTo(-size/6, size/4);
+                ctx.lineTo(size/6, size/4);
+                
+                // Second platform
+                ctx.moveTo(-size/8, size/8);
+                ctx.lineTo(size/8, size/8);
+                
+                // Top
+                ctx.moveTo(-size/16, -size/4);
+                ctx.lineTo(size/16, -size/4);
+                ctx.lineTo(0, -size/2);
+                ctx.lineTo(-size/16, -size/4);
+                
+                ctx.stroke();
+                
+                // Add "Paris" text
+                ctx.font = 'italic 16px Playfair Display';
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                ctx.fillText('Paris', 0, size/2 + 20);
+                
+                ctx.restore();
+            }
+            
+            // Initial setup
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Initial pencil positioning
+            repositionPencils();
+            
+            // Start animation
+            animate();
+        });
+    </script>
+</body>
+</html>
